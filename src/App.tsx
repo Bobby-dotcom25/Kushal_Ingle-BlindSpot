@@ -37,7 +37,14 @@ export default function App() {
         if (response.status === 429) {
           throw new Error('The AI service is temporarily busy. Please try again in a moment.');
         }
-        throw new Error('Something went wrong. Your reasoning wasn\'t lost. Please try again.');
+        let serverMsg = '';
+        try {
+          const errJson = await response.json();
+          serverMsg = errJson?.error || errJson?.message || '';
+        } catch {
+          // fallback
+        }
+        throw new Error(serverMsg || 'Something went wrong. Your reasoning wasn\'t lost. Please try again.');
       }
 
       const result = await response.json();
@@ -76,7 +83,14 @@ export default function App() {
         if (response.status === 429) {
           throw new Error('The AI service is temporarily busy. Please try again in a moment.');
         }
-        throw new Error('Reflection analysis couldn\'t be completed. Your original analysis is still available.');
+        let serverMsg = '';
+        try {
+          const errJson = await response.json();
+          serverMsg = errJson?.error || errJson?.message || '';
+        } catch {
+          // fallback
+        }
+        throw new Error(serverMsg || 'Reflection analysis couldn\'t be completed. Your original analysis is still available.');
       }
 
       const refinedResult = await response.json();
